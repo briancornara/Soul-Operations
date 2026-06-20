@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Control Operativo 360 — Transporte</title>
+<title>Control Operativo 360 - Transporte</title>
+<link rel="icon" type="image/png" href="favicon.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -29,6 +30,8 @@ body { background:var(--bg); color:var(--text); font-family:var(--fb); font-size
 .badge { font-size:10px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; padding:4px 12px; border-radius:20px; }
 .badge-blue { background:rgba(91,156,246,0.12); color:var(--accent); border:1px solid rgba(91,156,246,0.25); }
 .badge-green { background:rgba(52,211,153,0.12); color:var(--green); border:1px solid rgba(52,211,153,0.25); }
+.btn-back { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--text2); background:var(--bg3); border:1px solid var(--border2); padding:7px 16px; border-radius:8px; text-decoration:none; transition:all .2s; }
+.btn-back:hover { color:var(--text); border-color:var(--accent); background:rgba(91,156,246,0.08); }
 
 /* FILTROS ACTIVOS */
 .filters-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; flex-wrap:wrap; min-height:32px; }
@@ -130,7 +133,7 @@ table.tc tr:last-child td { border-bottom:none; }
   </div>
   <div class="hdr-right">
     <span class="badge badge-blue" id="badge-periodo">Ene — Jul 2025</span>
-    <span class="badge badge-green">● En vivo</span>
+    <a href="aftermarket.html" class="btn-back">← Volver al inicio</a>
   </div>
 </div>
 
@@ -216,8 +219,7 @@ table.tc tr:last-child td { border-bottom:none; }
 </div>
 
 <div class="footer">
-  <div class="footer-brand"><span>Soul Operations</span> · Control real para tu operación · briancornara@gmail.com</div>
-  <div class="footer-note">Datos ficticios de demostración · Mayo 2026</div>
+  <div class="panel-footer">© 2026 Soul Operations</div>
 </div>
 
 <script>
@@ -466,6 +468,16 @@ function initCharts() {
 }
 
 initCharts();
+
+// Forzar redibujado tras el primer render para evitar gráficos invisibles al cargar
+setTimeout(() => {
+  chartMes.resize();
+  chartMes.update();
+  chartRubro.resize();
+  chartRubro.update();
+  chartCam.resize();
+  chartCam.update();
+}, 150);
 </script>
 </body>
 </html>
