@@ -83,6 +83,10 @@ table.tc th:last-child { text-align:right; }
 table.tc td { padding:7px 0; border-bottom:1px solid var(--border); font-size:12px; color:var(--text2); vertical-align:middle; }
 table.tc td:last-child { text-align:right; font-family:var(--fh); font-weight:600; color:var(--text); }
 table.tc tr:last-child td { border-bottom:none; }
+table.tc tbody tr { cursor:pointer; transition:background .15s; }
+table.tc tbody tr:hover { background:var(--bg4); }
+table.tc tbody tr.active-cliente { background:rgba(91,156,246,0.1); }
+table.tc tbody tr.active-cliente td:first-child { color:var(--accent); font-weight:600; }
 .rank-num { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:6px; background:var(--bg4); font-size:10px; font-weight:600; color:var(--text3); margin-right:8px; }
 .rank-1{background:rgba(251,191,36,.15);color:var(--amber);}
 .rank-2{background:rgba(91,156,246,.12);color:var(--accent);}
@@ -232,7 +236,7 @@ const CAMS = ['CAM-1','CAM-2','CAM-3'];
 const CAMS_COL = {'CAM-1':'#5b9cf6','CAM-2':'#2dd4bf','CAM-3':'#a78bfa'};
 
 // Estado de filtros
-const filtros = { mes:null, rubro:null, cam:null };
+const filtros = { mes:null, rubro:null, cam:null, cliente:null };
 
 let chartMes, chartRubro, chartCam;
 const FNT = "'DM Sans',sans-serif";
@@ -252,7 +256,8 @@ function getViajes() {
   return VIAJES.filter(v =>
     (filtros.mes===null || v.mes===filtros.mes) &&
     (filtros.rubro===null || v.rubro===filtros.rubro) &&
-    (filtros.cam===null || v.cam===filtros.cam)
+    (filtros.cam===null || v.cam===filtros.cam) &&
+    (filtros.cliente===null || v.cliente===filtros.cliente)
   );
 }
 
@@ -275,8 +280,13 @@ function toggleCam(cam) {
   renderAll();
 }
 
+function toggleCliente(cliente) {
+  filtros.cliente = filtros.cliente===cliente ? null : cliente;
+  renderAll();
+}
+
 function clearAll() {
-  filtros.mes=null; filtros.rubro=null; filtros.cam=null;
+  filtros.mes=null; filtros.rubro=null; filtros.cam=null; filtros.cliente=null;
   document.querySelectorAll('.mes-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector('[data-mes="null"]').classList.add('active');
   renderAll();
@@ -311,6 +321,7 @@ function renderAll() {
   if(filtros.mes) chips.push(`<span class="filter-chip filter-chip-mes" onclick="toggleMes(${filtros.mes}, document.querySelector('[data-mes=\"${filtros.mes}\"]'))">📅 ${MESES_FULL[filtros.mes]}<span class="filter-chip-x">×</span></span>`);
   if(filtros.rubro) chips.push(`<span class="filter-chip filter-chip-rubro" onclick="toggleRubro('${filtros.rubro}')">🏷 ${filtros.rubro}<span class="filter-chip-x">×</span></span>`);
   if(filtros.cam) chips.push(`<span class="filter-chip filter-chip-cam" onclick="toggleCam('${filtros.cam}')">🚛 ${filtros.cam}<span class="filter-chip-x">×</span></span>`);
+  if(filtros.cliente) chips.push(`<span class="filter-chip filter-chip-cam" onclick="toggleCliente('${filtros.cliente}')">👤 ${filtros.cliente}<span class="filter-chip-x">×</span></span>`);
   const afEl = document.getElementById('active-filters');
   if(chips.length===0) {
     afEl.innerHTML = '<span class="no-filter">Ninguno — mostrando todos los datos</span>';
@@ -324,7 +335,8 @@ function renderAll() {
     const sub = VIAJES.filter(v =>
       v.mes===m &&
       (filtros.rubro===null||v.rubro===filtros.rubro) &&
-      (filtros.cam===null||v.cam===filtros.cam)
+      (filtros.cam===null||v.cam===filtros.cam) &&
+      (filtros.cliente===null||v.cliente===filtros.cliente)
     );
     const i2=sub.reduce((s,v)=>s+v.ingreso,0);
     const c2=sub.reduce((s,v)=>s+v.costo,0);
@@ -342,7 +354,8 @@ function renderAll() {
   // ---- CHART RUBRO ---- donut
   const rubroBase = VIAJES.filter(v =>
     (filtros.mes===null||v.mes===filtros.mes) &&
-    (filtros.cam===null||v.cam===filtros.cam)
+    (filtros.cam===null||v.cam===filtros.cam) &&
+    (filtros.cliente===null||v.cliente===filtros.cliente)
   );
   const rubroTotals = RUBROS.map(r => rubroBase.filter(v=>v.rubro===r).reduce((s,v)=>s+v.ingreso,0));
   const totalR = rubroTotals.reduce((a,b)=>a+b,0)||1;
@@ -368,7 +381,8 @@ function renderAll() {
   // ---- CHART CAM ---- barras horizontales
   const camBase = VIAJES.filter(v =>
     (filtros.mes===null||v.mes===filtros.mes) &&
-    (filtros.rubro===null||v.rubro===filtros.rubro)
+    (filtros.rubro===null||v.rubro===filtros.rubro) &&
+    (filtros.cliente===null||v.cliente===filtros.cliente)
   );
   const camKms = CAMS.map(c => camBase.filter(v=>v.cam===c).reduce((s,v)=>s+v.km,0));
   chartCam.data.datasets[0].data = camKms;
@@ -389,13 +403,18 @@ function renderAll() {
   ).join('');
 
   // ---- RANKING CLIENTES ----
+  const cliBase = VIAJES.filter(v =>
+    (filtros.mes===null||v.mes===filtros.mes) &&
+    (filtros.rubro===null||v.rubro===filtros.rubro) &&
+    (filtros.cam===null||v.cam===filtros.cam)
+  );
   const cliMap = {};
-  vs.forEach(v => { cliMap[v.cliente]=(cliMap[v.cliente]||0)+v.ingreso; });
+  cliBase.forEach(v => { cliMap[v.cliente]=(cliMap[v.cliente]||0)+v.ingreso; });
   const top7 = Object.entries(cliMap).sort((a,b)=>b[1]-a[1]).slice(0,7);
   const rankCls = ['rank-1','rank-2','rank-3'];
   document.getElementById('tabla-clientes').innerHTML = top7.length>0
     ? top7.map(([cli,ing],i) =>
-        `<tr><td><span class="rank-num ${rankCls[i]||''}">${i+1}</span>${cli}</td><td>${fmt(ing)}</td></tr>`
+        `<tr class="${filtros.cliente===cli?'active-cliente':''}" onclick="toggleCliente('${cli}')"><td><span class="rank-num ${rankCls[i]||''}">${i+1}</span>${cli}</td><td>${fmt(ing)}</td></tr>`
       ).join('')
     : '<tr><td colspan="2" style="color:var(--text3);padding:12px 0;text-align:center;">Sin datos para los filtros seleccionados</td></tr>';
 
