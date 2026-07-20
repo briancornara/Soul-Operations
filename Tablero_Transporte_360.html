@@ -275,6 +275,15 @@ function toggleRubro(rubro) {
   filtros.rubro = filtros.rubro===rubro ? null : rubro;
   renderAll();
 }
+function toggleCam(cam) {
+  filtros.cam = filtros.cam===cam ? null : cam;
+  renderAll();
+}
+
+function toggleCliente(cliente) {
+  filtros.cliente = filtros.cliente===cliente ? null : cliente;
+  renderAll();
+}
 
 function toggleCliente(cliente) {
   filtros.cliente = filtros.cliente===cliente ? null : cliente;
@@ -317,6 +326,7 @@ function renderAll() {
   if(filtros.mes) chips.push(`<span class="filter-chip filter-chip-mes" onclick="toggleMes(${filtros.mes}, document.querySelector('[data-mes=\"${filtros.mes}\"]'))">📅 ${MESES_FULL[filtros.mes]}<span class="filter-chip-x">×</span></span>`);
   if(filtros.rubro) chips.push(`<span class="filter-chip filter-chip-rubro" onclick="toggleRubro('${filtros.rubro}')">🏷 ${filtros.rubro}<span class="filter-chip-x">×</span></span>`);
   if(filtros.cam) chips.push(`<span class="filter-chip filter-chip-cam" onclick="toggleCam('${filtros.cam}')">🚛 ${filtros.cam}<span class="filter-chip-x">×</span></span>`);
+  if(filtros.cliente) chips.push(`<span class="filter-chip filter-chip-cam" onclick="toggleCliente('${filtros.cliente}')">👤 ${filtros.cliente}<span class="filter-chip-x">×</span></span>`);
   const afEl = document.getElementById('active-filters');
   if(chips.length===0) {
     afEl.innerHTML = '<span class="no-filter">Ninguno — mostrando todos los datos</span>';
@@ -328,10 +338,11 @@ function renderAll() {
   // ---- CHART MES ---- barras highlight
   const mesData = [1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
     const sub = VIAJES.filter(v =>
-      v.mes===m &&
-      (filtros.rubro===null||v.rubro===filtros.rubro) &&
-      (filtros.cam===null||v.cam===filtros.cam)
-    );
+  v.mes===m &&
+  (filtros.rubro===null||v.rubro===filtros.rubro) &&
+  (filtros.cam===null||v.cam===filtros.cam) &&
+  (filtros.cliente===null||v.cliente===filtros.cliente)
+);
     const i2=sub.reduce((s,v)=>s+v.ingreso,0);
     const c2=sub.reduce((s,v)=>s+v.costo,0);
     return (i2-c2)/1e6;
@@ -347,9 +358,10 @@ function renderAll() {
 
   // ---- CHART RUBRO ---- donut
   const rubroBase = VIAJES.filter(v =>
-    (filtros.mes===null||v.mes===filtros.mes) &&
-    (filtros.cam===null||v.cam===filtros.cam)
-  );
+  (filtros.mes===null||v.mes===filtros.mes) &&
+  (filtros.cam===null||v.cam===filtros.cam) &&
+  (filtros.cliente===null||v.cliente===filtros.cliente)
+);
   const rubroTotals = RUBROS.map(r => rubroBase.filter(v=>v.rubro===r).reduce((s,v)=>s+v.ingreso,0));
   const totalR = rubroTotals.reduce((a,b)=>a+b,0)||1;
   const rubroPcts = rubroTotals.map(v=>+(v/totalR*100).toFixed(2));
@@ -373,9 +385,10 @@ function renderAll() {
 
   // ---- CHART CAM ---- barras horizontales
   const camBase = VIAJES.filter(v =>
-    (filtros.mes===null||v.mes===filtros.mes) &&
-    (filtros.rubro===null||v.rubro===filtros.rubro)
-  );
+  (filtros.mes===null||v.mes===filtros.mes) &&
+  (filtros.rubro===null||v.rubro===filtros.rubro) &&
+  (filtros.cliente===null||v.cliente===filtros.cliente)
+);
   const camKms = CAMS.map(c => camBase.filter(v=>v.cam===c).reduce((s,v)=>s+v.km,0));
   chartCam.data.datasets[0].data = camKms;
   chartCam.data.datasets[0].backgroundColor = CAMS.map(c =>
@@ -389,7 +402,7 @@ function renderAll() {
   // Cam stats cards
   document.getElementById('cam-stats').innerHTML = CAMS.map((c,i) =>
     `<div class="cam-stat ${filtros.cam===c?'active-cam':''}" onclick="toggleCam('${c}')">
-      <div class="cam-stat-val" style="color:${Object.values(CAMS_COL)[i]}">${fmtKm(camKms[i])}K</div>
+      <div class="cam-stat-val" style="color:${Object.values(CAMS_COL)[i]}">${fmtKm(camKms[i])}</div>
       <div class="cam-stat-lbl">${c}</div>
     </div>`
   ).join('');
@@ -467,8 +480,8 @@ function initCharts() {
         callbacks:{label:ctx=>' '+ctx.parsed.x.toLocaleString('es-AR')+' km — clic para filtrar'}
       }} ,
       scales:{
-        x:{ticks:{color:TICK,font:{family:FNT,size:11},callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:GRID},beginAtZero:true},
-        y:{ticks:{color:'#8b88aa',font:{family:FNT,size:12,weight:'500'}},grid:{display:false}}
+        y:{ticks:{color:'#8b88aa',font:{family:FNT,size:12,weight:'500'}},grid:{display:false}},
+        x:{ticks:{color:TICK,font:{family:FNT,size:11},callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:GRID},beginAtZero:true}
       }
     }
   });
