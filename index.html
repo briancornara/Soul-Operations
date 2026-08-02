@@ -136,7 +136,7 @@ section { padding: 100px 24px; }
 .prob-card p { font-size: 14px; color: var(--text2); line-height: 1.6; }
 
 /* SERVICIOS */
-.servicios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 56px; }
+.servicios-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 40px; }
 .serv-card {
   background: var(--bg2); border: 1px solid var(--border); border-radius: 16px;
   padding: 36px; position: relative; overflow: hidden; transition: border-color 0.2s;
@@ -147,6 +147,7 @@ section { padding: 100px 24px; }
 }
 .serv-card.s1::before { background: linear-gradient(90deg, var(--teal), transparent); }
 .serv-card.s2::before { background: linear-gradient(90deg, var(--accent), transparent); }
+.s3::before { background: linear-gradient(90deg, var(--amber), transparent); }
 .serv-num { font-family: var(--font-head); font-size: 48px; font-weight: 800; color: var(--border2); margin-bottom: 8px; line-height: 1; }
 .serv-card h3 { font-family: var(--font-head); font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
 .serv-card p { font-size: 15px; color: var(--text2); margin-bottom: 24px; font-weight: 300; line-height: 1.7; }
@@ -158,6 +159,9 @@ section { padding: 100px 24px; }
 .serv-tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; }
 .s1 .serv-tag { background: rgba(0,206,201,0.12); color: var(--teal); border: 1px solid rgba(0,206,201,0.25); }
 .s2 .serv-tag { background: rgba(108,92,231,0.12); color: var(--accent2); border: 1px solid rgba(108,92,231,0.25); }
+.s3 .serv-tag { background: rgba(251,191,36,0.12); color: var(--amber); border: 1px solid rgba(251,191,36,0.25); }
+.s3 .serv-items li::before { background: var(--amber); }
+.s3 .serv-cta { color: var(--amber); }
 
 /* PROCESO */
 .proceso { background: var(--bg2); }
@@ -266,8 +270,8 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
       </div>
       <div class="prob-card">
         <div class="prob-icon" style="background:rgba(0,206,201,0.1);">🔄</div>
-        <h3>Procesos poco claros</h3>
-        <p>Las operaciones dependen de personas clave, no de procesos documentados y medibles.</p>
+        <h3>Seguimiento manual</h3>
+        <p>Cuando el control se realiza en planillas o múltiples archivos, al actualizar y consolidar información consume tiempo y aumenta el riesgo de errores.</p>
       </div>
       <div class="prob-card">
         <div class="prob-icon" style="background:rgba(108,92,231,0.1);">📉</div>
@@ -310,6 +314,20 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
           <li>Ordenamiento y análisis de datos</li>
           <li>Implementación de tablero de control</li>
           <li>Informe con oportunidades de mejora</li>
+        </ul>
+      </div>
+
+      <div class="serv-card s3">
+        <div class="serv-num">03</div>
+        <span class="serv-tag">Cobertura</span>
+        <h3>Coverage Control</h3>
+        <p>Dashboard interactivo para monitorear el estado de cobertura de clientes y proyectos, permitiendo identificar desvíos, detectar oportunidades y facilitar la toma de decisiones.</p>
+        <ul class="serv-items">
+          <li>Monitoreo de cobertura por cliente</li>
+          <li>Identificación de desvíos y alertas</li>
+          <li>Detección de oportunidades de mejora</li>
+          <li>Visualización interactiva de indicadores</li>
+          <li>Informe ejecutivo con recomendaciones</li>
         </ul>
       </div>
     </div>
