@@ -7,6 +7,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -145,7 +146,10 @@
         </div>
       </div>
     </div>
-    <a href="aftermarket.html" class="btn-back" style="align-self:flex-start; margin-top:4px;">← Volver al inicio</a>
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+  <a href="aftermarket.html" class="btn-back" style="margin-top:0;">← Volver al inicio</a>
+  <button onclick="exportarExcel()"style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:#1a1a1a; background:#ffffff; border:1px solid #dddddd; padding:8px 18px; border-radius:8px; cursor:pointer; transition:all .2s; white-space:nowrap;"<span style="color:#e03131;">⬇</span> Exportar archivo</button>
+</div>
   </div>
 
   <div class="kpi-grid">
@@ -356,6 +360,72 @@ new Chart(document.getElementById('errChart'), {
     }
   }
 });
+function exportarExcel() {
+  const datos = [
+    ["ID","Marca","Código","Categoría","Producto","Proveedor"],
+    [1,"SCHNEIDER","COD-672","CABLES","Cable unipolar 2.5mm","CABLEMAX"],
+    [2,"PHILIPS","COD-441","ILUMINACION","Lámpara LED 9W","ENERGIA SA"],
+    [3,"PHILIPS","COD-322","ILUMINACION","Downlight empotrable","ENERGIA SA"],
+    [4,"OSRAM","COD-815","ILUMINACION","Tubo LED 18W","ELECTRO SRL"],
+    [5,"SCHNEIDER","COD-103","TABLEROS","Disyuntor 16A","CABLEMAX"],
+    [6,"BTICINO","COD-229","TABLEROS","Tablero 12 módulos","DIST SUR"],
+    [7,"GEWISS","COD-334","CABLES","Cable subterráneo 4mm","CABLEMAX"],
+    [8,"OSRAM","COD-567","ILUMINACION","Reflector LED 50W","ELECTRO SRL"],
+    [9,"SCHNEIDER","COD-788","TABLEROS","Interruptor diferencial","CABLEMAX"],
+    [10,"PHILIPS","COD-190","ILUMINACION","Panel LED 24W","ENERGIA SA"],
+    [11,"BTICINO","COD-445","CABLES","Cable flexible 1.5mm","DIST SUR"],
+    [12,"GEWISS","COD-612","TABLEROS","Caja de distribución","CABLEMAX"],
+    [13,"OSRAM","COD-723","ILUMINACION","Tira LED 5m","ELECTRO SRL"],
+    [14,"SCHNEIDER","COD-891","CABLES","Cable apantallado 2x1","CABLEMAX"],
+    [15,"PHILIPS","COD-056","ILUMINACION","Balizas de emergencia","ENERGIA SA"],
+    [16,"BTICINO","COD-317","TABLEROS","Riel DIN 35mm","DIST SUR"],
+    [17,"GEWISS","COD-428","CABLES","Cable RV-K 3x2.5mm","CABLEMAX"],
+    [18,"OSRAM","COD-510","TABLEROS","Contactor 25A","ELECTRO SRL"],
+    [19,"SCHNEIDER","COD-634","ILUMINACION","Sensor de movimiento","CABLEMAX"],
+    [20,"PHILIPS","COD-741","CABLES","Cable paralelo 2x1.5mm","ENERGIA SA"],
+    [21,"BTICINO","COD-852","ILUMINACION","Luminaria industrial","DIST SUR"],
+    [22,"GEWISS","COD-963","TABLEROS","Guardamotor 9-13A","CABLEMAX"],
+    [23,"OSRAM","COD-174","ILUMINACION","Proyector LED 100W","ELECTRO SRL"],
+    [24,"SCHNEIDER","COD-285","CABLES","Cable tierra verde","CABLEMAX"],
+    [25,"PHILIPS","COD-396","TABLEROS","Bloque de terminales","ENERGIA SA"],
+    [26,"BTICINO","COD-407","ILUMINACION","Plafón circular LED","DIST SUR"],
+    [27,"GEWISS","COD-518","CABLES","Cable trenzado 3x1.5mm","CABLEMAX"],
+    [28,"OSRAM","COD-629","ILUMINACION","Foco GU10 7W","ELECTRO SRL"],
+    [29,"SCHNEIDER","COD-730","TABLEROS","Fusible 10A NH","CABLEMAX"],
+    [30,"PHILIPS","COD-841","CABLES","Cable multiconductor","ENERGIA SA"],
+    [31,"BTICINO","COD-952","ILUMINACION","Aplique exterior LED","DIST SUR"],
+    [32,"GEWISS","COD-163","TABLEROS","Portafusible 32A","CABLEMAX"],
+    [33,"OSRAM","COD-274","ILUMINACION","Balasto electrónico","ELECTRO SRL"],
+    [34,"SCHNEIDER","COD-385","CABLES","Cable NYY 3x4mm","CABLEMAX"],
+    [35,"PHILIPS","COD-496","ILUMINACION","Lámpara halógena 50W","ENERGIA SA"],
+    [36,"BTICINO","COD-507","TABLEROS","Interruptor automático","DIST SUR"],
+    [37,"GEWISS","COD-618","CABLES","Cable H07V-K 6mm","CABLEMAX"],
+    [38,"OSRAM","COD-729","ILUMINACION","Downlight LED 12W","ELECTRO SRL"],
+    [39,"SCHNEIDER","COD-830","TABLEROS","Relé térmico 7-10A","CABLEMAX"],
+    [40,"PHILIPS","COD-941","CABLES","Cable UTP Cat6","ENERGIA SA"],
+    [41,"BTICINO","COD-152","ILUMINACION","Techo LED 36W","DIST SUR"],
+    [42,"GEWISS","COD-263","TABLEROS","Seccionador 63A","CABLEMAX"],
+    [43,"OSRAM","COD-374","ILUMINACION","Módulo LED 30W","ELECTRO SRL"],
+    [44,"SCHNEIDER","COD-485","CABLES","Cable LSZH 2x2.5mm","CABLEMAX"],
+    [45,"PHILIPS","COD-596","ILUMINACION","Luminaria estanca","ENERGIA SA"],
+    [46,"BTICINO","COD-607","TABLEROS","Bornes de conexión","DIST SUR"],
+    [47,"GEWISS","COD-718","CABLES","Cable solar PV 4mm","CABLEMAX"],
+    [48,"OSRAM","COD-829","ILUMINACION","Panel LED 60x60","ELECTRO SRL"],
+    [49,"SCHNEIDER","COD-930","TABLEROS","Transformador 220/24V","CABLEMAX"],
+    [50,"PHILIPS","COD-041","CABLES","Cable coaxial RG6","ENERGIA SA"]
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(datos);
+
+  // Ancho de columnas
+  ws['!cols'] = [
+    {wch:6}, {wch:14}, {wch:12}, {wch:16}, {wch:30}, {wch:16}
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Base Limpia");
+  XLSX.writeFile(wb, "DataClean_SoulOperations_Estandarizado.xlsx");
+}
 </script>
 </body>
 </html>
